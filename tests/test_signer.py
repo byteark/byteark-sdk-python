@@ -132,3 +132,9 @@ def test_byteark_signer_create_default_expire(signer: ByteArkSigner):
 
     assert isinstance(expire, int)
     assert expire >= int((now + timedelta(seconds=signer.default_age)).timestamp())
+
+
+def test_byteark_signer_sign_using_default_expire(signer: ByteArkSigner):
+    signed_url = signer.sign("http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8")
+    expire = signer._create_default_expire()
+    assert str(expire) in signed_url
