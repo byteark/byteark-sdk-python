@@ -126,7 +126,7 @@ def test_byteark_signer_sign_with_client_ip_with_path_prefix(signer: ByteArkSign
     )
 
 
-def test_byteark_signer_sign_without_expire(signer: ByteArkSigner):
+def test_byteark_signer_create_default_expire(signer: ByteArkSigner):
     now = datetime.now(UTC)
     expire = signer._create_default_expire()
 
