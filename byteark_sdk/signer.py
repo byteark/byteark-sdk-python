@@ -10,6 +10,14 @@ class MissingOptions(Exception):
     pass
 
 
+class SignedUrlExpiredError(Exception):
+    pass
+
+
+class SignedUrlInvalidSignature(Exception):
+    pass
+
+
 class ByteArkSigner:
     def __init__(self, **options):
         self.access_key = options.get("access_key")
@@ -105,5 +113,26 @@ class ByteArkSigner:
 
         return signed_url
 
+    def verify(self, signed: str) -> bool:
+        parsed_url = urlparse(signed)
+        query_params = urllib.parse.parse_qs(parsed_url.query)
 
-__all__ = ['ByteArkSigner']
+        expire = int(query_params["x_ark_expires"][0])
+        if expire < int(datetime.now(UTC).timestamp()):
+            raise SignedUrlExpiredError("The signed url is expired")
+
+        signature = query_params["x_ark_signature"][0]
+        string_to_sign = self._make_string_to_sign(signed, expire)
+        if signature != self._make_signature(string_to_sign):
+            raise SignedUrlInvalidSignature(
+                "The signature of the signed url is invalid"
+            )
+
+        return True
+
+
+__all__ = [
+    "ByteArkSigner",
+    "SignedUrlExpiredError",
+    "SignedUrlInvalidSignature",
+]
