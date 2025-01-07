@@ -23,12 +23,13 @@ class ByteArkSigner:
         if not self.access_secret:
             raise MissingOptions('access_secret is required')
 
-    def _make_string_to_sign(self, url: str, expire: int):
+    def _make_string_to_sign(self, url: str, expire: int, options: dict = {}):
         parsed_url = urlparse(url)
         host = parsed_url.netloc
+        method = options.get("method", "GET")
 
         elements = []
-        elements.append("GET")
+        elements.append(method)
         elements.append(host)
         elements.append(parsed_url.path)
         elements.append(str(expire))
@@ -46,7 +47,7 @@ class ByteArkSigner:
         hash_str = hash_str.rstrip("=")
         return hash_str
 
-    def sign(self, url: str, expire: int, **options) -> str:
+    def sign(self, url: str, expire: int, options: dict = {}) -> str:
         if expire == 0:
             expire = self.default_age
 
@@ -54,7 +55,7 @@ class ByteArkSigner:
             "x_ark_access_id": self.access_key,
             "x_ark_auth_type": "ark-v2",
             "x_ark_expires": expire,
-            "x_ark_signature": self._make_signature(self._make_string_to_sign(url, expire)),
+            "x_ark_signature": self._make_signature(self._make_string_to_sign(url, expire, options)),
         }
 
         query_string = urllib.parse.urlencode(params)
