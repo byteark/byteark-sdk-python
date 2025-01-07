@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 import pytest
 from byteark_sdk import ByteArkSigner
 
@@ -122,3 +124,11 @@ def test_byteark_signer_sign_with_client_ip_with_path_prefix(signer: ByteArkSign
             "&x_ark_path_prefix=%2Fvideo-objects%2FQDuxJm02TYqJ%2F"
             "&x_ark_signature=2bkwVFSu6CzW7KmzXkwDbA"
     )
+
+
+def test_byteark_signer_sign_without_expire(signer: ByteArkSigner):
+    now = datetime.now(UTC)
+    expire = signer._create_default_expire()
+
+    assert isinstance(expire, int)
+    assert expire >= int((now + timedelta(seconds=signer.default_age)).timestamp())

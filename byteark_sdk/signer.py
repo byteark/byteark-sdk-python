@@ -2,6 +2,7 @@ import base64
 import hashlib
 import urllib.parse
 from collections import OrderedDict
+from datetime import datetime, UTC, timedelta
 from urllib.parse import urlparse
 
 
@@ -59,9 +60,12 @@ class ByteArkSigner:
         hash_str = hash_str.rstrip("=")
         return hash_str
 
-    def sign(self, url: str, expire: int, options: dict = {}) -> str:
+    def _create_default_expire(self) -> int:
+        return int((datetime.now(UTC) + timedelta(seconds=self.default_age)).timestamp())
+
+    def sign(self, url: str, expire: int = 0, options: dict = {}) -> str:
         if expire == 0:
-            expire = self.default_age
+            expire = self._create_default_expire()
 
         options_ = {}
         for k in options:
