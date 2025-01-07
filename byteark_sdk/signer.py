@@ -38,8 +38,11 @@ class ByteArkSigner:
         else:
             elements.append(parsed_url.path)
 
-        if "client_ip" in options or "client-ip" in options:
+        if "client_ip" in options:
             elements.append(f"client_ip:{options['client_ip']}")
+
+        if "user_agent" in options:
+            elements.append(f"user_agent:{options['user_agent']}")
 
         elements.append(str(expire))
         elements.append(self.access_secret)
@@ -79,6 +82,9 @@ class ByteArkSigner:
 
         if "client_ip" in options:
             params["x_ark_client_ip"] = "1"
+
+        if "user_agent" in options:
+            params["x_ark_user_agent"] = "1"
 
         params = OrderedDict(sorted(params.items()))
         query_string = urllib.parse.urlencode(params)
