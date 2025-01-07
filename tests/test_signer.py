@@ -103,3 +103,22 @@ def test_byteark_signer_sign_with_user_agent(signer: ByteArkSigner):
             "&x_ark_signature=yYFkwZolbxCarOLHuKjD7w"
             "&x_ark_user_agent=1"
     )
+
+
+def test_byteark_signer_sign_with_client_ip_with_path_prefix(signer: ByteArkSigner):
+    signed_url = signer.sign("http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+                             1514764800,
+                             {
+                                 "client-ip": "103.253.132.65",
+                                 "path_prefix": "/video-objects/QDuxJm02TYqJ/",
+                             })
+    assert (
+            signed_url ==
+            "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8"
+            "?x_ark_access_id=2Aj6Wkge4hi1ZYLp0DBG"
+            "&x_ark_auth_type=ark-v2"
+            "&x_ark_client_ip=1"
+            "&x_ark_expires=1514764800"
+            "&x_ark_path_prefix=%2Fvideo-objects%2FQDuxJm02TYqJ%2F"
+            "&x_ark_signature=2bkwVFSu6CzW7KmzXkwDbA"
+    )
