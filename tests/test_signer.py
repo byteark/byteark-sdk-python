@@ -2,7 +2,12 @@ import re
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from byteark_sdk import ByteArkSigner, ExpiredSignedUrlError, InvalidSignatureError
+from byteark_sdk import (
+    ByteArkSigner,
+    ExpiredSignedUrlError,
+    InvalidSignatureError,
+    InvalidSignConditionError,
+)
 
 
 @pytest.fixture
@@ -185,3 +190,21 @@ def test_byteark_signer_verify_invalid_signature_url(signer: ByteArkSigner):
     with pytest.raises(InvalidSignatureError) as e:
         signer.verify(signed_url)
     assert str(e.value) == "The signature of the signed url is invalid"
+
+
+def test_byteark_signer_verify_valid_path_prefix_url(signer: ByteArkSigner):
+    signed_url = signer.sign(
+        "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+        options={"path_prefix": "x_ark_path_prefix=/video-objects/QDuxJm02TYqJ/"},
+    )
+
+
+def test_byteark_signer_verify_invalid_path_prefix_url(signer: ByteArkSigner):
+    signed_url = signer.sign(
+        "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+        options={"path_prefix": "x_ark_path_prefix=/video-objects/invalid"},
+    )
+
+    with pytest.raises(InvalidSignConditionError) as e:
+        signer.verify(signed_url)
+    assert str(e.value) == "The signed url is invalid"

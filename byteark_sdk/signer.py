@@ -18,6 +18,10 @@ class InvalidSignatureError(Exception):
     pass
 
 
+class InvalidSignConditionError(Exception):
+    pass
+
+
 class ByteArkSigner:
     def __init__(self, **options):
         self.access_key = options.get("access_key")
@@ -117,9 +121,19 @@ class ByteArkSigner:
         parsed_url = urlparse(signed)
         query_params = urllib.parse.parse_qs(parsed_url.query)
 
-        expire = int(query_params["x_ark_expires"][0])
-        if expire < int(datetime.now(UTC).timestamp()):
-            raise ExpiredSignedUrlError("The signed url is expired")
+        expire = query_params["x_ark_expires"]
+        if expire:
+            expire = expire[0]
+            if int(expire) < int(datetime.now(UTC).timestamp()):
+                raise ExpiredSignedUrlError("The signed url is expired")
+        else:
+            raise InvalidSignConditionError("The signed url is invalid")
+
+        path_prefix = query_params.get("x_ark_path_prefix")
+        if path_prefix:
+            path_prefix = path_prefix[0]
+            if path_prefix != parsed_url.path[: len(path_prefix)]:
+                raise InvalidSignConditionError("The signed url is invalid")
 
         signature = query_params["x_ark_signature"][0]
         string_to_sign = self._make_string_to_sign(signed, expire)
@@ -133,4 +147,5 @@ __all__ = [
     "ByteArkSigner",
     "ExpiredSignedUrlError",
     "InvalidSignatureError",
+    "InvalidSignConditionError",
 ]
