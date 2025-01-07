@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -173,3 +174,14 @@ def test_byteark_signer_verify_expired_url(signer: ByteArkSigner):
     with pytest.raises(ExpiredSignedUrlError) as e:
         signer.verify(signed_url)
     assert str(e.value) == "The signed url is expired"
+
+
+def test_byteark_signer_verify_invalid_signature_url(signer: ByteArkSigner):
+    signed_url = signer.sign(
+        "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8"
+    )
+    signed_url = re.sub(r"x_ark_signature=[^&]+", "x_ark_signature=invalid", signed_url)
+
+    with pytest.raises(InvalidSignatureError) as e:
+        signer.verify(signed_url)
+    assert str(e.value) == "The signature of the signed url is invalid"
