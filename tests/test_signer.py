@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from byteark_sdk import ByteArkSigner, SignedUrlExpiredError
+from byteark_sdk import ByteArkSigner, ExpiredSignedUrlError, InvalidSignatureError
 
 
 @pytest.fixture
@@ -170,6 +170,6 @@ def test_byteark_signer_verify_expired_url(signer: ByteArkSigner):
         1514764800,
     )
 
-    with pytest.raises(SignedUrlExpiredError) as e:
+    with pytest.raises(ExpiredSignedUrlError) as e:
         signer.verify(signed_url)
     assert str(e.value) == "The signed url is expired"

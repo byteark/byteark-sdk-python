@@ -10,11 +10,11 @@ class MissingOptions(Exception):
     pass
 
 
-class SignedUrlExpiredError(Exception):
+class ExpiredSignedUrlError(Exception):
     pass
 
 
-class SignedUrlInvalidSignature(Exception):
+class InvalidSignatureError(Exception):
     pass
 
 
@@ -119,20 +119,18 @@ class ByteArkSigner:
 
         expire = int(query_params["x_ark_expires"][0])
         if expire < int(datetime.now(UTC).timestamp()):
-            raise SignedUrlExpiredError("The signed url is expired")
+            raise ExpiredSignedUrlError("The signed url is expired")
 
         signature = query_params["x_ark_signature"][0]
         string_to_sign = self._make_string_to_sign(signed, expire)
         if signature != self._make_signature(string_to_sign):
-            raise SignedUrlInvalidSignature(
-                "The signature of the signed url is invalid"
-            )
+            raise InvalidSignatureError("The signature of the signed url is invalid")
 
         return True
 
 
 __all__ = [
     "ByteArkSigner",
-    "SignedUrlExpiredError",
-    "SignedUrlInvalidSignature",
+    "ExpiredSignedUrlError",
+    "InvalidSignatureError",
 ]
