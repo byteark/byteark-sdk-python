@@ -43,3 +43,31 @@ def test_byteark_signer_sign_with_path_prefix(signer: ByteArkSigner):
             "&x_ark_path_prefix=%2Fvideo-objects%2FQDuxJm02TYqJ%2F"
             "&x_ark_signature=334wInm0jKfC6LCm23zndA"
     )
+
+
+def test_byteark_signer_sign_with_client_ip_dash(signer: ByteArkSigner):
+    signed_url = signer.sign("http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+                             1514764800,
+                             {"client_ip": "103.253.132.65"})
+    assert (
+            signed_url ==
+            "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8"
+            "?x_ark_access_id=2Aj6Wkge4hi1ZYLp0DBG&x_ark_auth_type=ark-v2"
+            "&x_ark_client_ip=1"
+            "&x_ark_expires=1514764800"
+            "&x_ark_signature=Gr9T_ZdHDy8l8CCPxpFjNg"
+    )
+
+
+def test_byteark_signer_sign_with_client_ip_underscore(signer: ByteArkSigner):
+    signed_url = signer.sign("http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+                             1514764800,
+                             {"client-ip": "103.253.132.65"})
+    assert (
+            signed_url ==
+            "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8"
+            "?x_ark_access_id=2Aj6Wkge4hi1ZYLp0DBG&x_ark_auth_type=ark-v2"
+            "&x_ark_client_ip=1"
+            "&x_ark_expires=1514764800"
+            "&x_ark_signature=Gr9T_ZdHDy8l8CCPxpFjNg"
+    )

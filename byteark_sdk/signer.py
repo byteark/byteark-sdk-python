@@ -38,6 +38,9 @@ class ByteArkSigner:
         else:
             elements.append(parsed_url.path)
 
+        if "client_ip" in options or "client-ip" in options:
+            elements.append(f"client_ip:{options['client_ip']}")
+
         elements.append(str(expire))
         elements.append(self.access_secret)
 
@@ -57,6 +60,13 @@ class ByteArkSigner:
         if expire == 0:
             expire = self.default_age
 
+        options_ = {}
+        for k in options:
+            v = options[k]
+            k = k.lower().replace("-", "_")
+            options_[k] = v
+        options = options_
+
         params = OrderedDict([
             ("x_ark_access_id", self.access_key),
             ("x_ark_auth_type", "ark-v2"),
@@ -66,6 +76,9 @@ class ByteArkSigner:
 
         if "path_prefix" in options:
             params["x_ark_path_prefix"] = options["path_prefix"]
+
+        if "client_ip" in options:
+            params["x_ark_client_ip"] = "1"
 
         params = OrderedDict(sorted(params.items()))
         query_string = urllib.parse.urlencode(params)
