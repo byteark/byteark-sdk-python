@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import urllib.parse
+from collections import OrderedDict
 from urllib.parse import urlparse
 
 
@@ -31,7 +32,12 @@ class ByteArkSigner:
         elements = []
         elements.append(method)
         elements.append(host)
-        elements.append(parsed_url.path)
+
+        if "path_prefix" in options:
+            elements.append(options["path_prefix"])
+        else:
+            elements.append(parsed_url.path)
+
         elements.append(str(expire))
         elements.append(self.access_secret)
 
@@ -51,13 +57,17 @@ class ByteArkSigner:
         if expire == 0:
             expire = self.default_age
 
-        params = {
-            "x_ark_access_id": self.access_key,
-            "x_ark_auth_type": "ark-v2",
-            "x_ark_expires": expire,
-            "x_ark_signature": self._make_signature(self._make_string_to_sign(url, expire, options)),
-        }
+        params = OrderedDict([
+            ("x_ark_access_id", self.access_key),
+            ("x_ark_auth_type", "ark-v2"),
+            ("x_ark_expires", expire),
+            ("x_ark_signature", self._make_signature(self._make_string_to_sign(url, expire, options))),
+        ])
 
+        if "path_prefix" in options:
+            params["x_ark_path_prefix"] = options["path_prefix"]
+
+        params = OrderedDict(sorted(params.items()))
         query_string = urllib.parse.urlencode(params)
         signed_url = f"{url}?{query_string}"
 
