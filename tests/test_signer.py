@@ -1,5 +1,5 @@
 import re
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from byteark_sdk import (
@@ -148,7 +148,7 @@ def test_byteark_signer_sign_with_client_ip_with_path_prefix(signer: ByteArkSign
 
 
 def test_byteark_signer_create_default_expire(signer: ByteArkSigner):
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     expire = signer._create_default_expire()
 
     assert isinstance(expire, int)

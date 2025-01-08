@@ -2,7 +2,8 @@ import base64
 import hashlib
 import urllib.parse
 from collections import OrderedDict
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
+
 from urllib.parse import urlparse
 
 
@@ -73,7 +74,9 @@ class ByteArkSigner:
 
     def _create_default_expire(self) -> int:
         return int(
-            (datetime.now(UTC) + timedelta(seconds=self.default_age)).timestamp()
+            (
+                datetime.now(timezone.utc) + timedelta(seconds=self.default_age)
+            ).timestamp()
         )
 
     def sign(self, url: str, expires: int = 0, options: dict = {}) -> str:
@@ -123,7 +126,7 @@ class ByteArkSigner:
         expire = query_params["x_ark_expires"]
         if expire:
             expire = expire[0]
-            if int(expire) < int(datetime.now(UTC).timestamp()):
+            if int(expire) < int(datetime.now(timezone.utc).timestamp()):
                 raise ExpiredSignedUrlError("The signed url is expired")
         else:
             raise InvalidSignConditionError("The signed url is invalid")
