@@ -16,18 +16,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        pipx install poetry==2.0.0
-        poetry install
-    - name: Test with pytest
-      run: |
-        poetry run pytest --junitxml=junit/test-results.xml --cov byteark_sdk --cov-report xml --cov-report html
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pipx install poetry==2.0.0
+          poetry install
+      - name: Test with pytest
+        run: |
+          poetry run pytest --junitxml=junit/test-results.xml --cov byteark_sdk --cov-report xml --cov-report html
+      - name: Upload pytest test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: junit/test-results-${{ matrix.python-version }}.xml
+          # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
