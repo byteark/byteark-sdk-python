@@ -42,21 +42,21 @@ print(signed_url)
 # Sign with HTTP HEAD method
 signed_url = signer.sign(
     "https://example.cdn.byteark.com/path/to/file.png",
-    expire=1514764800,
+    expires=1514764800,
     options={"method": "HEAD"},
 )
 
 # Sign with path_prefix
 signed_url = signer.sign(
     "https://example.cdn.byteark.com/path/to/file.png",
-    expire=1514764800,
+    expires=1514764800,
     options={"path_prefix": "/path/to/"},
 )
 
 # Sign with client IP
 signed_url = signer.sign(
     "https://example.cdn.byteark.com/path/to/file.png",
-    expire=1514764800,
+    expires=1514764800,
     options={"client_ip": "123.123.123.123"},
 )
 
@@ -68,7 +68,7 @@ user_agent = (
 )
 signed_url = signer.sign(
     "https://example.cdn.byteark.com/path/to/file.png",
-    expire=1514764800,
+    expires=1514764800,
     options={"client_ip": "123.123.123.123", "user_agent": user_agent},
 )
 

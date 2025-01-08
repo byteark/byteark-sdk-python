@@ -77,9 +77,9 @@ class ByteArkSigner:
             (datetime.now(UTC) + timedelta(seconds=self.default_age)).timestamp()
         )
 
-    def sign(self, url: str, expire: int = 0, options: dict = {}) -> str:
-        if expire == 0:
-            expire = self._create_default_expire()
+    def sign(self, url: str, expires: int = 0, options: dict = {}) -> str:
+        if expires == 0:
+            expires = self._create_default_expire()
 
         options_ = {}
         for k in options:
@@ -92,11 +92,11 @@ class ByteArkSigner:
             [
                 ("x_ark_access_id", self.access_key),
                 ("x_ark_auth_type", "ark-v2"),
-                ("x_ark_expires", expire),
+                ("x_ark_expires", expires),
                 (
                     "x_ark_signature",
                     self._make_signature(
-                        self._make_string_to_sign(url, expire, options)
+                        self._make_string_to_sign(url, expires, options)
                     ),
                 ),
             ]
