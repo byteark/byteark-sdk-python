@@ -30,4 +30,4 @@ jobs:
         poetry install
     - name: Test with pytest
       run: |
-        poetry run pytest --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        poetry run pytest --junitxml=junit/test-results.xml --cov byteark_sdk --cov-report xml --cov-report html
