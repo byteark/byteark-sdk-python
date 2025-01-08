@@ -31,6 +31,13 @@ print(signed_url)
 
 ### Sign URL with options
 
+| Option      | Required | Default | Description                                         |
+|-------------|----------|---------|-----------------------------------------------------|
+| method      | -        | GET     | HTTP Method that allowed to use with the signed URL |
+| path_prefix | -        | -       | Path prefix that allowed to use with the signed URL |
+| client_ip   | -        | -       | Legacy signing conditions                           |
+| user_agent  | -        | -       | Legacy signing conditions                           |
+
 ```python
 # Sign with HTTP HEAD method
 signed_url = signer.sign(
