@@ -27,7 +27,6 @@ class ByteArkSigner:
         self.access_key = options.get("access_key")
         self.access_secret = options.get("access_secret")
         self.default_age = options.get("default_age", 900)
-        self.skip_url_encode = options.get("skip_url_encode", False)
 
         self._check_options()
 
