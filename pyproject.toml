@@ -1,6 +1,6 @@
 [project]
 name = "byteark-sdk"
-version = "0.1.0"
+version = "0.1.1a0"
 description = ""
 authors = [
     { name = "Piyaboot Thavilthirakul", email = "piyaboot@inox.co.th" }
@@ -16,7 +16,5 @@ build-backend = "poetry.core.masonry.api"
 black = "^24.10.0"
 pytest = "^8.3.4"
 
-
 [tool.pytest.ini_options]
 console_output_style = "classic"
-
