@@ -6,6 +6,39 @@ from datetime import datetime, timedelta, timezone
 
 from urllib.parse import urlparse
 
+SIGN_OPTIONS = {
+    "client_ip": {
+        "include_value": False,
+    },
+    "client-ip": {
+        "include_value": False,
+    },
+    "origin": {
+        "include_value": False,
+    },
+    "referer": {
+        "include_value": False,
+    },
+    "user_agent": {
+        "include_value": False,
+    },
+    "geo_allow": {
+        "include_value": True,
+    },
+    "geo_block": {
+        "include_value": True,
+    },
+    "max_resolution": {
+        "include_value": True,
+    },
+    "request_tags": {
+        "include_value": True,
+    },
+    "viwer_group": {
+        "include_value": True,
+    },
+}
+
 
 class MissingOptions(Exception):
     pass
@@ -51,11 +84,9 @@ class ByteArkSigner:
         else:
             elements.append(parsed_url.path)
 
-        if "client_ip" in options:
-            elements.append(f"client_ip:{options['client_ip']}")
-
-        if "user_agent" in options:
-            elements.append(f"user_agent:{options['user_agent']}")
+        for k in options:
+            if k in SIGN_OPTIONS:
+                elements.append(f"{k}:{options[k]}")
 
         elements.append(str(expire))
         elements.append(self.access_secret)
@@ -107,11 +138,12 @@ class ByteArkSigner:
         if "path_prefix" in options:
             params["x_ark_path_prefix"] = options["path_prefix"]
 
-        if "client_ip" in options:
-            params["x_ark_client_ip"] = "1"
-
-        if "user_agent" in options:
-            params["x_ark_user_agent"] = "1"
+        for k in options:
+            if k in SIGN_OPTIONS:
+                if SIGN_OPTIONS[k]["include_value"]:
+                    params[f"x_ark_{k}"] = options[k]
+                else:
+                    params[f"x_ark_{k}"] = "1"
 
         params = OrderedDict(sorted(params.items()))
         query_string = urllib.parse.urlencode(params)
