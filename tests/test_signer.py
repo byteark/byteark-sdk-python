@@ -66,7 +66,7 @@ def test_byteark_signer_sign_with_path_prefix(signer: ByteArkSigner):
     )
 
 
-def test_byteark_signer_sign_with_client_ip_dash(signer: ByteArkSigner):
+def test_byteark_signer_sign_with_client_ip_underscore(signer: ByteArkSigner):
     signed_url = signer.sign(
         "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
         1514764800,
@@ -83,7 +83,7 @@ def test_byteark_signer_sign_with_client_ip_dash(signer: ByteArkSigner):
     )
 
 
-def test_byteark_signer_sign_with_client_ip_underscore(signer: ByteArkSigner):
+def test_byteark_signer_sign_with_client_ip_dash(signer: ByteArkSigner):
     signed_url = signer.sign(
         "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
         1514764800,
