@@ -162,6 +162,18 @@ def test_byteark_signer_sign_with_request_tags(signer: ByteArkSigner):
     assert query_params["x_ark_request_tags"] == ["tag1,tag2,tag3"]
 
 
+def test_byteark_signer_sign_with_origin(signer: ByteArkSigner):
+    signed_url = signer.sign(
+        "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+        1514764800,
+        {"origin": "test.example.com"},
+    )
+    parsed_url = urlparse(signed_url)
+    query_params = urllib.parse.parse_qs(parsed_url.query)
+
+    assert query_params["x_ark_origin"] == ["1"]
+
+
 def test_byteark_signer_create_default_expire(signer: ByteArkSigner):
     now = datetime.now(timezone.utc)
     expire = signer._create_default_expire()
