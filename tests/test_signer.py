@@ -1,7 +1,10 @@
 import re
+import urllib.parse
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 import pytest
+
 from byteark_sdk import (
     ByteArkSigner,
     ExpiredSignedUrlError,
@@ -145,6 +148,18 @@ def test_byteark_signer_sign_with_client_ip_with_path_prefix(signer: ByteArkSign
         "&x_ark_path_prefix=%2Fvideo-objects%2FQDuxJm02TYqJ%2F"
         "&x_ark_signature=2bkwVFSu6CzW7KmzXkwDbA"
     )
+
+
+def test_byteark_signer_sign_with_request_tags(signer: ByteArkSigner):
+    signed_url = signer.sign(
+        "http://inox.qoder.byteark.com/video-objects/QDuxJm02TYqJ/playlist.m3u8",
+        1514764800,
+        {"request_tags": "tag1,tag2,tag3"},
+    )
+    parsed_url = urlparse(signed_url)
+    query_params = urllib.parse.parse_qs(parsed_url.query)
+
+    assert query_params["x_ark_request_tags"] == ["tag1,tag2,tag3"]
 
 
 def test_byteark_signer_create_default_expire(signer: ByteArkSigner):
